@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">MN Public Access Sites</string>
+	<string name="action_settings">Settings</string>
+	<string name="action_create_rental">Create Rental</string>
+	<string name="action_create_pontoon">Create Pontoon</string>
+	<string name="tab1_title">Public Accesses</string>
+	<string name="tab2_title">Calendar</string>
+	<string name="tab3_title">List</string>
+	<string name="filterHint">Search</string>
+	<string name="updateURL">http://deli.dnr.state.mn.us/cgi-bin/bundle.pl?data=shor_waspt3+mn&amp;assemblytype=tiles&amp;kbytes=0</string>
+	<string name="doUpdate">Download Updates</string>
+	<string name="checkingUpdate">Checking for updates....</string>
+	<string name="yes">Yes</string>
+	<string name="no">No</string>
+	<string name="continueLabel">Continue</string>
+	<string name="labelName">Name:</string>
+	<string name="mapButtonLabel">View on map</string>
+	<string name="labelLake">Lake:</string>
+	<string name="labelCounty">County:</string>
+	<string name="labelLaunch">Launch:</string>
+	<string name="labelDocks">Docks:</string>
+	<string name="labelDistance">Distance:</string>
+	<string name="labelDirections">Directions:</string>
+	<string name="mapTypeLabel">Map Type</string>
+	<string name="mapTypeSummary">Select the type of map to be displayed.</string>
+</resources>

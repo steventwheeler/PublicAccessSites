@@ -1,0 +1,26 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+id/action_search"
+		android:title="@string/filterHint"
+		android:orderInCategory="100"
+		android:showAsAction="ifRoom|collapseActionView"
+		android:icon="@android:drawable/ic_menu_search"
+		android:actionViewClass="android.widget.SearchView" />
+	<item
+		android:id="@+id/action_view_map"
+		android:title="@string/mapButtonLabel"
+		android:orderInCategory="101"
+		android:showAsAction="ifRoom|withText"
+		android:icon="@android:drawable/ic_dialog_map"/>
+	<item
+		android:id="@+id/action_update"
+		android:title="@string/doUpdate"
+		android:orderInCategory="102"
+		android:showAsAction="never"
+		android:icon="@android:drawable/ic_popup_sync"/>
+	<item
+		android:id="@+id/action_settings"
+		android:title="@string/action_settings"
+		android:orderInCategory="103"
+		android:showAsAction="never"
+		android:icon="@android:drawable/ic_menu_preferences"/>
+</menu>

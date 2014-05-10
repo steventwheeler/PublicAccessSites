@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory
+		android:summary="Public access database update options."
+		android:title="Update Settings">
+		<EditTextPreference
+			android:key="updateServer"
+			android:summary="Please enter the URL of the update server."
+			android:title="Update Server URL"
+			android:defaultValue="@string/updateURL"/>
+
+		<ListPreference
+			android:key="mapType"
+			android:entries="@array/mapTypeNames"
+			android:entryValues="@array/mapTypeValues"
+			android:title="@string/mapTypeLabel"
+			android:summary="@string/mapTypeSummary"
+			/>
+	</PreferenceCategory>
+</PreferenceScreen>
