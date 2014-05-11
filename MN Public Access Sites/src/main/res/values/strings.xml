@@ -16,7 +16,7 @@
 	<string name="no">No</string>
 	<string name="continueLabel">Continue</string>
 	<string name="labelName">Name:</string>
-	<string name="mapButtonLabel">View on map</string>
+	<string name="mapButtonLabel">View in Google Maps</string>
 	<string name="labelLake">Lake:</string>
 	<string name="labelCounty">County:</string>
 	<string name="labelLaunch">Launch:</string>

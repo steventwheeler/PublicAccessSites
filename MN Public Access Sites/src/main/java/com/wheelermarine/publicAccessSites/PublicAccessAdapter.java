@@ -98,7 +98,7 @@ public class PublicAccessAdapter extends ArrayAdapter<PublicAccess> implements F
 		protected FilterResults performFiltering(CharSequence query) {
 
 			FilterResults results = new FilterResults();
-			String queryStr = query == null ? "" : query.toString().trim().toLowerCase();
+			String queryStr = normalize(query);
 			Log.v(TAG, "Filtering: " + queryStr);
 
 			List<PublicAccess> out = new ArrayList<PublicAccess>();
@@ -106,7 +106,7 @@ public class PublicAccessAdapter extends ArrayAdapter<PublicAccess> implements F
 				out.addAll(original);
 			} else {
 				for (PublicAccess access : new ArrayList<PublicAccess>(original)) {
-					if (access.getLake().toLowerCase().contains(queryStr)) {
+					if (normalize(access.getLake()).contains(queryStr) || normalize(access.getName()).contains(queryStr)) {
 						out.add(access);
 					}
 				}
@@ -114,6 +114,11 @@ public class PublicAccessAdapter extends ArrayAdapter<PublicAccess> implements F
 			results.values = out;
 			results.count = out.size();
 			return results;
+		}
+
+		private String normalize(CharSequence str) {
+
+			return str == null?"":str.toString().toLowerCase().replaceAll("[^a-z0-9]", "");
 		}
 
 		@Override
