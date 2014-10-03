@@ -11,9 +11,11 @@ import android.util.Log;
 import android.widget.Toast;
 import com.wheelermarine.publicAccessSites.dbase.DBaseReader;
 import com.wheelermarine.publicAccessSites.dbase.Record;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPReply;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -136,7 +138,7 @@ public class Updater extends AsyncTask<URL, Integer, Integer> {
 				Document doc = Jsoup.connect(urls[0].toString()).timeout(timeout * 1000).userAgent(userAgent).get();
 				URL dataURL = null;
 				for (Element element : doc.select("a")) {
-					if (element.hasAttr("href") && element.attr("href").startsWith("ftp://ftp.dnr.state.mn.us")) {
+					if (element.hasAttr("href") && element.attr("href").endsWith(".zip")) {
 						dataURL = new URL(element.attr("href"));
 					}
 				}
@@ -154,80 +156,61 @@ public class Updater extends AsyncTask<URL, Integer, Integer> {
 						progress.setIndeterminate(true);
 					}
 				});
-				FTPClient ftp = new FTPClient();
+				HttpClient client = new DefaultHttpClient();
+				HttpGet get = new HttpGet(dataURL.toString());
+				HttpResponse response = client.execute(get);
+				HttpEntity entity = response.getEntity();
+				if (entity == null) throw new IOException("Error downloading update.");
+
+				Map<Integer, Location> locations = null;
+
+				// Download the ZIP archive.
+				Log.v(TAG, "Downloading: " + dataURL.getFile());
+				InputStream in = entity.getContent();
+				if (in == null) throw new FileNotFoundException(dataURL.getFile() + " was not found!");
 				try {
-					ftp.setConnectTimeout(timeout * 1000);
-					ftp.setDefaultTimeout(timeout * 1000);
-					ftp.connect(dataURL.getHost());
-					ftp.enterLocalPassiveMode();
-
-					// After connection attempt, you should check the reply code
-					// to verify success.
-					if (!FTPReply.isPositiveCompletion(ftp.getReplyCode())) {
-						ftp.disconnect();
-						throw new IOException("FTP server refused connection: " + ftp.getReplyString());
-					}
-
-					// Login using the standard anonymous credentials.
-					if (!ftp.login("anonymous", "anonymous")) {
-						ftp.disconnect();
-						throw new IOException("FTP Error: " + ftp.getReplyString());
-					}
-
-					Map<Integer, Location> locations = null;
-
-					// Download the ZIP archive.
-					Log.v(TAG, "Downloading: " + dataURL.getFile());
-					ftp.setFileType(FTP.BINARY_FILE_TYPE);
-					InputStream in = ftp.retrieveFileStream(dataURL.getFile());
-					if (in == null)
-						throw new FileNotFoundException(dataURL.getFile() + " was not found!");
+					ZipInputStream zin = new ZipInputStream(in);
 					try {
-						ZipInputStream zin = new ZipInputStream(in);
-						try {
-							// Locate the .dbf entry in the ZIP archive.
-							ZipEntry entry;
-							while ((entry = zin.getNextEntry()) != null) {
-								if (entry.getName().endsWith(entryName)) {
-									readDBaseFile(zin, database);
-								} else if (entry.getName().endsWith(shapeEntryName)) {
-									locations = readShapeFile(zin);
-								}
-							}
-						} finally {
-							try {
-								zin.close();
-							} catch (Exception e) {
-								// Ignore this error.
+						// Locate the .dbf entry in the ZIP archive.
+						ZipEntry entry;
+						while ((entry = zin.getNextEntry()) != null) {
+							if (entry.getName().endsWith(entryName)) {
+								readDBaseFile(zin, database);
+							} else if (entry.getName().endsWith(shapeEntryName)) {
+								locations = readShapeFile(zin);
 							}
 						}
 					} finally {
-						in.close();
-					}
-
-					if (locations != null) {
-						final int recordCount = locations.size();
-						activity.runOnUiThread(new Runnable() {
-							@Override
-							public void run() {
-								progress.setIndeterminate(false);
-								progress.setMessage("Updating locations...");
-								progress.setMax(recordCount);
-							}
-						});
-
-						int progress = 0;
-						for (int recordNumber : locations.keySet()) {
-							PublicAccess access = db.getPublicAccessByRecordNumber(recordNumber);
-							Location loc = locations.get(recordNumber);
-							access.setLatitude(loc.getLatitude());
-							access.setLongitude(loc.getLongitude());
-							db.updatePublicAccess(access);
-							publishProgress(++progress);
+						try {
+							zin.close();
+						} catch (Exception e) {
+							// Ignore this error.
 						}
 					}
 				} finally {
-					if (ftp.isConnected()) ftp.disconnect();
+					in.close();
+				}
+
+				if (locations != null) {
+					final int recordCount = locations.size();
+					activity.runOnUiThread(new Runnable() {
+						@Override
+						public void run() {
+							progress.setIndeterminate(false);
+							progress.setMessage("Updating locations...");
+							progress.setMax(recordCount);
+						}
+					});
+
+					int progress = 0;
+					for (int recordNumber : locations.keySet()) {
+						PublicAccess access = db.getPublicAccessByRecordNumber(recordNumber);
+						Location loc = locations.get(recordNumber);
+						access.setLatitude(loc.getLatitude());
+						access.setLongitude(loc.getLongitude());
+						db.updatePublicAccess(access);
+						publishProgress(++progress);
+					}
 				}
 				database.setTransactionSuccessful();
 				return db.getPublicAccessesCount();
@@ -249,7 +232,7 @@ public class Updater extends AsyncTask<URL, Integer, Integer> {
 		if (header.getShapeType() != ShapeType.POINT)
 			throw new InvalidShapeFileException("Unable to read " + header.getShapeType() + " shape files.");
 
-		Map<Integer, Location> locations = new HashMap<Integer, Location>();
+		Map<Integer, Location> locations = new HashMap<>();
 		AbstractShape s;
 		while ((s = reader.next()) != null) {
 			if (s.getShapeType() == ShapeType.POINT) {

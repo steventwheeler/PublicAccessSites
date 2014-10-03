@@ -65,7 +65,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 
 	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVerison) {
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
 		db.execSQL(SQL_DELETE_ENTRIES);
 		onCreate(db);
@@ -86,8 +86,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public long addPublicAccess(PublicAccess publicAccess) {
 
 		SQLiteDatabase db = getWritableDatabase();
-		if (db == null)
-			throw new RuntimeException("Unable to find writable database.");
+		if (db == null) throw new RuntimeException("Unable to find writable database.");
 
 		ContentValues values = new ContentValues();
 		values.put(PublicAccessEntry.COLUMN_NAME_NAME, publicAccess.getName());
@@ -114,8 +113,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public PublicAccess getPublicAccess(long id) {
 
 		SQLiteDatabase db = this.getReadableDatabase();
-		if (db == null)
-			throw new RuntimeException("Unable to find readable database.");
+		if (db == null) throw new RuntimeException("Unable to find readable database.");
 
 		String whereSql = PublicAccessEntry.COLUMN_NAME_ID + "=?";
 		String[] args = {String.valueOf(id)};
@@ -136,8 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public PublicAccess getPublicAccessByRecordNumber(int recordNumber) {
 
 		SQLiteDatabase db = this.getReadableDatabase();
-		if (db == null)
-			throw new RuntimeException("Unable to find readable database.");
+		if (db == null) throw new RuntimeException("Unable to find readable database.");
 
 		String whereSql = PublicAccessEntry.COLUMN_NAME_RECORD_NUMBER + "=?";
 		String[] args = {String.valueOf(recordNumber)};
@@ -164,8 +161,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 		List<PublicAccess> list = new ArrayList<PublicAccess>();
 		SQLiteDatabase db = this.getReadableDatabase();
-		if (db == null)
-			throw new RuntimeException("Unable to find readable database.");
+		if (db == null) throw new RuntimeException("Unable to find readable database.");
 		Cursor cursor = db.query(PublicAccessEntry.TABLE_NAME, PublicAccessEntry.COLUMN_NAMES, null, null, null, null, "name, lake", null);
 		try {
 			while (cursor.moveToNext()) {
@@ -197,8 +193,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public int updatePublicAccess(PublicAccess publicAccess) {
 
 		SQLiteDatabase db = this.getWritableDatabase();
-		if (db == null)
-			throw new RuntimeException("Unable to find writable database.");
+		if (db == null) throw new RuntimeException("Unable to find writable database.");
 
 		ContentValues values = new ContentValues();
 		values.put(PublicAccessEntry.COLUMN_NAME_ID, publicAccess.getId());
@@ -228,8 +223,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public int deleteAllPublicAccesses() {
 
 		SQLiteDatabase db = this.getWritableDatabase();
-		if (db == null)
-			throw new RuntimeException("Unable to find writable database.");
+		if (db == null) throw new RuntimeException("Unable to find writable database.");
 		return db.delete(PublicAccessEntry.TABLE_NAME, null, null);
 	}
 
@@ -244,8 +238,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		SQLiteDatabase db = this.getWritableDatabase();
 		String whereSql = PublicAccessEntry.COLUMN_NAME_ID + "=?";
 		String[] args = {String.valueOf(publicAccess.getId())};
-		if (db == null)
-			throw new RuntimeException("Unable to find writable database.");
+		if (db == null) throw new RuntimeException("Unable to find writable database.");
 		return db.delete(PublicAccessEntry.TABLE_NAME, whereSql, args);
 	}
 

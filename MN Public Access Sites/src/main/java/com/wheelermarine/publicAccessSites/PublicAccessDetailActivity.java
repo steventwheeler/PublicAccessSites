@@ -91,11 +91,14 @@ public class PublicAccessDetailActivity extends Activity {
 			if (mapTypeStr == null || !mapTypeStr.matches("[0-9]+")) mapTypeStr = String.valueOf(GoogleMap.MAP_TYPE_NORMAL);
 			int mapType = Integer.parseInt(mapTypeStr);
 
-			GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-			map.setMyLocationEnabled(true);
-			map.setMapType(mapType);
-			map.moveCamera(CameraUpdateFactory.newLatLngZoom(access.getLatLon(), 13));
-			map.addMarker(new MarkerOptions().title(access.getName()).snippet(access.getLake()).position(access.getLatLon()));
+			MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
+			if (mapFragment != null) {
+				GoogleMap map = mapFragment.getMap();
+				map.setMyLocationEnabled(true);
+				map.setMapType(mapType);
+				map.moveCamera(CameraUpdateFactory.newLatLngZoom(access.getLatLon(), 13));
+				map.addMarker(new MarkerOptions().title(access.getName()).snippet(access.getLake()).position(access.getLatLon()));
+			}
 		}
 
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
