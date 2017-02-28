@@ -9,7 +9,7 @@
 	<string name="tab2_title">Calendar</string>
 	<string name="tab3_title">List</string>
 	<string name="filterHint">Search</string>
-	<string name="updateURL">http://deli.dnr.state.mn.us/cgi-bin/bundle.pl?data=shor_waspt3+mn&amp;assemblytype=tiles&amp;kbytes=0</string>
+	<string name="updateURL">ftp://ftp.gisdata.mn.gov/pub/gdrs/data/pub/us_mn_state_dnr/loc_water_access_sites/shp_loc_water_access_sites.zip</string>
 	<string name="doUpdate">Download Updates</string>
 	<string name="checkingUpdate">Checking for updates....</string>
 	<string name="yes">Yes</string>

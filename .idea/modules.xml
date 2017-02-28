@@ -3,8 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/MN Public Access Sites/MN Public Access Sites.iml" filepath="$PROJECT_DIR$/MN Public Access Sites/MN Public Access Sites.iml" />
-      <module fileurl="file://$PROJECT_DIR$/MNPublicAccessSites.iml" filepath="$PROJECT_DIR$/MNPublicAccessSites.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PublicAccessSites.iml" filepath="$PROJECT_DIR$/PublicAccessSites.iml" />
     </modules>
   </component>
 </project>
-

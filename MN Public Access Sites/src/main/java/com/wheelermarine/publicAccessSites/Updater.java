@@ -11,6 +11,10 @@ import android.util.Log;
 import android.widget.Toast;
 import com.wheelermarine.publicAccessSites.dbase.DBaseReader;
 import com.wheelermarine.publicAccessSites.dbase.Record;
+
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
+import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -19,6 +23,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.parser.Tag;
 import org.nocrala.tools.gis.data.esri.shapefile.ShapeFileReader;
 import org.nocrala.tools.gis.data.esri.shapefile.exception.InvalidShapeFileException;
 import org.nocrala.tools.gis.data.esri.shapefile.header.ShapeFileHeader;
@@ -126,29 +131,18 @@ public class Updater extends AsyncTask<URL, Integer, Integer> {
 				// Clear out the old data.
 				database.delete(DatabaseHelper.PublicAccessEntry.TABLE_NAME, null, null);
 
-				// Connect to the web server and locate the FTP download link.
-				Log.v(TAG, "Finding update: " + urls[0]);
-				activity.runOnUiThread(new Runnable() {
-					@Override
-					public void run() {
-						progress.setMessage("Locating update...");
-						progress.setIndeterminate(true);
-					}
-				});
-				Document doc = Jsoup.connect(urls[0].toString()).timeout(timeout * 1000).userAgent(userAgent).get();
-				URL dataURL = null;
-				for (Element element : doc.select("a")) {
-					if (element.hasAttr("href") && element.attr("href").endsWith(".zip")) {
-						dataURL = new URL(element.attr("href"));
-					}
+				// Make sure the download URL was fund.
+				final URL url;
+				if (urls == null || urls.length == 0) {
+					throw new IllegalArgumentException("No URL was provided.");
+				} else if (urls.length > 1) {
+					throw new IllegalArgumentException("Too many URLs were provided.");
+				} else {
+					url = urls[0];
 				}
 
-				// Make sure the download URL was fund.
-				if (dataURL == null)
-					throw new FileNotFoundException("Unable to locate data URL.");
-
 				// Connect to the FTP server and download the update.
-				Log.v(TAG, "Downloading update: " + dataURL);
+				Log.v(TAG, "Downloading update: " + url);
 				activity.runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
@@ -156,62 +150,63 @@ public class Updater extends AsyncTask<URL, Integer, Integer> {
 						progress.setIndeterminate(true);
 					}
 				});
-				HttpClient client = new DefaultHttpClient();
-				HttpGet get = new HttpGet(dataURL.toString());
-				HttpResponse response = client.execute(get);
-				HttpEntity entity = response.getEntity();
-				if (entity == null) throw new IOException("Error downloading update.");
 
-				Map<Integer, Location> locations = null;
+                final FTPClient client = new FTPClient();
+                final int port = url.getPort() == -1 ? url.getDefaultPort() : url.getPort();
+                client.connect(url.getHost(), port);
+                client.login("anonymous", "");
+                client.enterLocalPassiveMode();
+                Log.v(TAG, "Reply Code: " + client.getReplyCode());
+                try {
+                    Log.v(TAG, "Connected to " + url.getHost() + ":" + port);
+                    client.setFileType(FTP.BINARY_FILE_TYPE);
 
-				// Download the ZIP archive.
-				Log.v(TAG, "Downloading: " + dataURL.getFile());
-				InputStream in = entity.getContent();
-				if (in == null) throw new FileNotFoundException(dataURL.getFile() + " was not found!");
-				try {
-					ZipInputStream zin = new ZipInputStream(in);
-					try {
-						// Locate the .dbf entry in the ZIP archive.
-						ZipEntry entry;
-						while ((entry = zin.getNextEntry()) != null) {
-							if (entry.getName().endsWith(entryName)) {
-								readDBaseFile(zin, database);
-							} else if (entry.getName().endsWith(shapeEntryName)) {
-								locations = readShapeFile(zin);
-							}
-						}
-					} finally {
-						try {
-							zin.close();
-						} catch (Exception e) {
-							// Ignore this error.
-						}
-					}
-				} finally {
-					in.close();
-				}
+                    // Download the ZIP archive.
+                    Log.v(TAG, "Downloading: " + url.getFile());
+                    try (InputStream in = client.retrieveFileStream(url.getFile())) {
+                        Log.v(TAG, "Reply Code: " + client.getReplyCode());
+                        if (in == null) throw new FileNotFoundException(url.getFile() + " was not found!");
 
-				if (locations != null) {
-					final int recordCount = locations.size();
-					activity.runOnUiThread(new Runnable() {
-						@Override
-						public void run() {
-							progress.setIndeterminate(false);
-							progress.setMessage("Updating locations...");
-							progress.setMax(recordCount);
-						}
-					});
+                        Map<Integer, Location> locations = null;
 
-					int progress = 0;
-					for (int recordNumber : locations.keySet()) {
-						PublicAccess access = db.getPublicAccessByRecordNumber(recordNumber);
-						Location loc = locations.get(recordNumber);
-						access.setLatitude(loc.getLatitude());
-						access.setLongitude(loc.getLongitude());
-						db.updatePublicAccess(access);
-						publishProgress(++progress);
-					}
-				}
+                        try (ZipInputStream zin = new ZipInputStream(in)) {
+                            // Locate the .dbf entry in the ZIP archive.
+                            ZipEntry entry;
+                            while ((entry = zin.getNextEntry()) != null) {
+                                if (entry.getName().endsWith(entryName)) {
+                                    readDBaseFile(zin, database);
+                                } else if (entry.getName().endsWith(shapeEntryName)) {
+                                    locations = readShapeFile(zin);
+                                }
+                            }
+                        }
+
+                        if (locations != null) {
+                            final int recordCount = locations.size();
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progress.setIndeterminate(false);
+                                    progress.setMessage("Updating locations...");
+                                    progress.setMax(recordCount);
+                                }
+                            });
+
+                            int progress = 0;
+                            for (int recordNumber : locations.keySet()) {
+                                PublicAccess access = db.getPublicAccessByRecordNumber(recordNumber);
+                                Location loc = locations.get(recordNumber);
+                                access.setLatitude(loc.getLatitude());
+                                access.setLongitude(loc.getLongitude());
+                                db.updatePublicAccess(access);
+                                publishProgress(++progress);
+                            }
+                        }
+                    }
+                } finally {
+                    client.disconnect();
+                }
+
 				database.setTransactionSuccessful();
 				return db.getPublicAccessesCount();
 			} finally {

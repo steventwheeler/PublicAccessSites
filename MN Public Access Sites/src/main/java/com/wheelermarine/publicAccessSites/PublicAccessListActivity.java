@@ -24,7 +24,7 @@ import java.net.URL;
  */
 public class PublicAccessListActivity extends ListActivity {
 
-	private static final String TAG = "PublicAccesses.PublicAccessListActivity";
+	private static final String TAG = "MNPAS.ListActivity";
 
 	private PublicAccessAdapter adapter;
 

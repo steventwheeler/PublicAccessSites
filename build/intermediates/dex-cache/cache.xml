@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\libs\commons-net-3.3.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="cd0d5510908225f76c5fe5a3f1df4fa44866f81e">
+        <dex dex="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\pre-dexed\release\commons-net-3.3_60bda54b29ed180d521d16b8ffd5b518903a42f6.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\exploded-aar\com.android.support\appcompat-v7\19.1.0\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="3499ceba05ca1f6037c6a2fad73df8f636224a28">
+        <dex dex="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\pre-dexed\release\com.android.support-appcompat-v7-19.1.0_24655761d91513bd0d5fd5a1495d8ec0577df480.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\exploded-aar\com.google.android.gms\play-services\5.0.89\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="d71573c9c5ea98a8db47ad6ff993a63d492b3bfa">
+        <dex dex="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\pre-dexed\release\com.google.android.gms-play-services-5.0.89_8db9bcd25b84adc944a6e46d649caabc0a867f1c.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\libs\jsoup-1.7.2.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="872693211fd68d1c4e116cf90021603207725e19">
+        <dex dex="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\pre-dexed\release\jsoup-1.7.2_6c08a84d0d85967253048d8a7899b844bee15172.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Android\sdk2\extras\android\m2repository\com\android\support\support-v4\19.1.0\support-v4-19.1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="85f201b380937e61a9dce6ca90ccf6872abbfb67">
+        <dex dex="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\pre-dexed\release\support-v4-19.1.0_b92cb44b4df5f87e1fbc7399faa2e26b1c821f7d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\libs\shapefilereader-1.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="19.1.0"
+        sha1="61d44683f02b3d408d9840a2e4d322c58646f28d">
+        <dex dex="C:\Users\Steven Wheeler\Documents\git\PublicAccessSites\MN Public Access Sites\build\intermediates\pre-dexed\release\shapefilereader-1.0_d69189555fc94a8d0a454900024ab64623117b45.jar" />
+    </item>
+
+</items>

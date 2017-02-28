@@ -1,5 +1,23 @@
 apply plugin: 'android'
 
+// Protect the signing config by storing it in a private file. Ensure that signing.properties exists
+// in the parent directory.
+if(project.hasProperty("PublicAccessSites.properties") && new File(project.property("PublicAccessSites.properties")).exists()) {
+	Properties props = new Properties()
+	props.load(new FileInputStream(file("../" + project.property("PublicAccessSites.properties"))))
+
+	android {
+		signingConfigs {
+			release {
+                keyAlias props['key.alias']
+                keyPassword props['key.password']
+                storeFile file('../' + props['store.file'])
+                storePassword props['store.password']
+			}
+		}
+	}
+}
+
 android {
 	compileSdkVersion 19
 	buildToolsVersion '19.1.0'
@@ -15,11 +33,10 @@ android {
 	}
 	buildTypes {
 		release {
-			runProguard false
+			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
 		}
-	}
-	signingConfigs {
 	}
 }
 
