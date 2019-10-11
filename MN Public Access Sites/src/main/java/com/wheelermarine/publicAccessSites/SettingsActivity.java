@@ -10,9 +10,9 @@ import android.preference.PreferenceActivity;
  * </p>
  */
 public class SettingsActivity extends PreferenceActivity {
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		addPreferencesFromResource(R.xml.settings);
-	}
+        addPreferencesFromResource(R.xml.settings);
+    }
 }

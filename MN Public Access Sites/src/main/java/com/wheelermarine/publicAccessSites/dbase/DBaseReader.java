@@ -32,92 +32,92 @@ import java.util.Iterator;
  */
 public class DBaseReader implements Iterable<Record>, Iterator<Record> {
 
-	private final DataInput in;
-	private final Header header;
-	private Record next;
+    private final DataInput in;
+    private final Header header;
+    private Record next;
 
-	/**
-	 * Create a new DBaseReader which will read the database records from the
-	 * provided InputStream.
-	 *
-	 * @param in the InputStream to read the records from.
-	 * @throws IOException if there is an error reading the records.
-	 */
-	public DBaseReader(InputStream in) throws IOException {
+    /**
+     * Create a new DBaseReader which will read the database records from the
+     * provided InputStream.
+     *
+     * @param in the InputStream to read the records from.
+     * @throws IOException if there is an error reading the records.
+     */
+    public DBaseReader(InputStream in) throws IOException {
 
-		this.in = new DataInputStream(in);
-		header = new Header(this.in);
-		next = Record.read(header, this.in);
-	}
+        this.in = new DataInputStream(in);
+        header = new Header(this.in);
+        next = Record.read(header, this.in);
+    }
 
-	/**
-	 * Get the total number of records in the database.
-	 *
-	 * @return the number of records.
-	 */
-	public int size() {
+    /**
+     * Get the total number of records in the database.
+     *
+     * @return the number of records.
+     */
+    public int size() {
 
-		return header.getNumberOfRecords();
-	}
+        return header.getNumberOfRecords();
+    }
 
-	/**
-	 * Get the Field at the provided index.
-	 *
-	 * @param index the index of the Field.
-	 * @return the Field at <code>index</code>.
-	 */
-	public Field getField(int index) {
+    /**
+     * Get the Field at the provided index.
+     *
+     * @param index the index of the Field.
+     * @return the Field at <code>index</code>.
+     */
+    public Field getField(int index) {
 
-		return header.getFields().get(index);
-	}
+        return header.getFields().get(index);
+    }
 
-	/**
-	 * Get the total number of Fields in the database.
-	 *
-	 * @return the number of Fields.
-	 */
-	public int getFieldCount() {
+    /**
+     * Get the total number of Fields in the database.
+     *
+     * @return the number of Fields.
+     */
+    public int getFieldCount() {
 
-		return header.getFields().size();
-	}
+        return header.getFields().size();
+    }
 
-	/**
-	 * Get the Header which contains metadata regarding the database.
-	 *
-	 * @return the database metadata.
-	 */
-	public Header getHeader() {
+    /**
+     * Get the Header which contains metadata regarding the database.
+     *
+     * @return the database metadata.
+     */
+    public Header getHeader() {
 
-		return header;
-	}
+        return header;
+    }
 
-	@Override
-	public boolean hasNext() {
+    @Override
+    public boolean hasNext() {
 
-		return next != null;
-	}
+        return next != null;
+    }
 
-	@Override
-	public Record next() {
+    @Override
+    public Record next() {
 
-		Record r = next;
-		try {
-			next = Record.read(header, in);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-		return r;
-	}
+        Record r = next;
+        try {
+            next = Record.read(header, in);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return r;
+    }
 
-	@Override
-	public void remove() {
+    @Override
+    public void remove() {
 
-		throw new UnsupportedOperationException("Not implemented.");
-	}
+        throw new UnsupportedOperationException("Not implemented.");
+    }
 
-	@Override
-	public Iterator<Record> iterator() {
+    @Override
+    public Iterator<Record> iterator() {
 
-		return this;
-	}
+        return this;
+    }
 }
