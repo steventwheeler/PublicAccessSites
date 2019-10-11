@@ -1,6 +1,9 @@
-.gradle
+/.idea/
+/build/
+/.gradle
 /local.properties
 /.idea/workspace.xml
 .DS_Store
 signing.properties
 *.apk
+*.iml

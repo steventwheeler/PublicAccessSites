@@ -7,10 +7,10 @@
 		android:actionViewClass="android.widget.SearchView" />
 	<item
 		android:id="@+id/action_view_map"
-		android:title="@string/mapButtonLabel"
+		android:icon="@android:drawable/ic_menu_mapmode"
 		android:orderInCategory="101"
 		android:showAsAction="ifRoom|withText"
-		android:icon="@android:drawable/ic_dialog_map"/>
+		android:title="@string/mapButtonLabel" />
 	<item
 		android:id="@+id/action_update"
 		android:title="@string/doUpdate"

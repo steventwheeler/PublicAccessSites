@@ -68,7 +68,7 @@ public class Record {
 				case FLOAT:
 				case NUMERIC:
 					if (!value.isEmpty() && !value.contains("?")) {
-						values.put(field.getFieldName(), new Double(value));
+						values.put(field.getFieldName(), Double.valueOf(value));
 					}
 					break;
 				case LOGICAL:

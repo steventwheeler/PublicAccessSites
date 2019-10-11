@@ -1,10 +1,12 @@
 package com.wheelermarine.publicAccessSites;
 
+import android.Manifest;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -20,10 +22,10 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 /**
  * <p>
@@ -45,10 +47,8 @@ public class PublicAccessDetailActivity extends Activity {
 		try {
 			ViewConfiguration config = ViewConfiguration.get(this);
 			Field menuKey = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-			if (menuKey != null) {
-				menuKey.setAccessible(true);
-				menuKey.setBoolean(config, false);
-			}
+			menuKey.setAccessible(true);
+			menuKey.setBoolean(config, false);
 		} catch (Exception e) {
 			Log.v(TAG, "Error updating menu button.", e);
 		}
@@ -88,21 +88,22 @@ public class PublicAccessDetailActivity extends Activity {
 			// Load the map type from the user's preferences. The default is normal.
 			android.content.SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 			String mapTypeStr = prefs.getString("mapType", String.valueOf(GoogleMap.MAP_TYPE_NORMAL));
-			if (mapTypeStr == null || !mapTypeStr.matches("[0-9]+")) mapTypeStr = String.valueOf(GoogleMap.MAP_TYPE_NORMAL);
+			if (!mapTypeStr.matches("[0-9]+")) mapTypeStr = String.valueOf(GoogleMap.MAP_TYPE_NORMAL);
 			int mapType = Integer.parseInt(mapTypeStr);
 
 			MapFragment mapFragment = (MapFragment) getFragmentManager().findFragmentById(R.id.map);
-			if (mapFragment != null) {
-				GoogleMap map = mapFragment.getMap();
-				map.setMyLocationEnabled(true);
-				map.setMapType(mapType);
-				map.moveCamera(CameraUpdateFactory.newLatLngZoom(access.getLatLon(), 13));
-				map.addMarker(new MarkerOptions().title(access.getName()).snippet(access.getLake()).position(access.getLatLon()));
+			if (mapFragment != null && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+				mapFragment.getMapAsync(map -> {
+					map.setMyLocationEnabled(true);
+					map.setMapType(mapType);
+					map.moveCamera(CameraUpdateFactory.newLatLngZoom(access.getLatLon(), 13));
+					map.addMarker(new MarkerOptions().title(access.getName()).snippet(access.getLake()).position(access.getLatLon()));
+				});
 			}
 		}
 
 		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		if (locationManager != null) {
+		if (locationManager != null && checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 			// First try and get the last known GPS position.
 			Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
@@ -177,7 +178,7 @@ public class PublicAccessDetailActivity extends Activity {
 		if (item.getItemId() == R.id.action_settings) {
 			startActivity(new Intent(getApplicationContext(), SettingsActivity.class));
 		} else if (item.getItemId() == R.id.action_view_map) {
-			String uri = String.format("geo:%1$f,%2$f?q=%1$f,%2$f(%3$s)", access.getLatitude(), access.getLongitude(), Uri.encode(access.getName().replace("(", "").replace(")", "")));
+			String uri = String.format(Locale.getDefault(), "geo:%1$f,%2$f?q=%1$f,%2$f(%3$s)", access.getLatitude(), access.getLongitude(), Uri.encode(access.getName().replace("(", "").replace(")", "")));
 			startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri)));
 		}
 		return super.onOptionsItemSelected(item);

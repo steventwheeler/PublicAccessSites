@@ -3,6 +3,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item
 		android:id="@+id/context_view_on_map"
-		android:title="@string/mapButtonLabel"
-		android:icon="@android:drawable/ic_dialog_map" />
+		android:icon="@android:drawable/ic_menu_mapmode"
+		android:title="@string/mapButtonLabel" />
 </menu>
