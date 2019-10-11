@@ -9,10 +9,10 @@ if (project.hasProperty("PublicAccessSites.properties") && new File(project.prop
 	android {
 		signingConfigs {
 			release {
-                keyAlias props['key.alias']
-                keyPassword props['key.password']
-                storeFile file('../' + props['store.file'])
-                storePassword props['store.password']
+				keyAlias props['key.alias']
+				keyPassword props['key.password']
+				storeFile file('../' + props['store.file'])
+				storePassword props['store.password']
 			}
 		}
 	}
@@ -35,7 +35,7 @@ android {
 		release {
 			minifyEnabled false
 			proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
+			signingConfig signingConfigs.release
 		}
 	}
 	packagingOptions {
