@@ -1,0 +1,3 @@
+This Android application is designed to give easy access to the public water access site location information provided by the [MN DNR](https://www.dnr.state.mn.us/mis/gis/index.html). The only modifications made to the DNR data is to convert from UTM to latitude/longitude which is easier to use with the Android APIs. The location data is not guaranteed to be accurate, in fact there are many instances where it is known to be inaccurate. Any issues with the accuracy of the data should be presented to the MN DNR.
+
+This application and it's source code are made freely available under the GNU GPLv3. Support for the development of this application comes from [Wheeler Marine](http://www.wheelermarine.com).
